@@ -459,4 +459,4 @@ function updateInputWidthsForMobile() {
 function handleScreenResize() {
     optimizeTableForMobile();
     updateInputWidthsForMobile();
-}
+} 
