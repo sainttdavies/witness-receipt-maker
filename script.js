@@ -342,3 +342,100 @@ function resetForm() {
         updateDateAndTime();
     }
 }
+// Add this function to your existing JavaScript file (script.js)
+
+// This function ensures the table cells adapt to the screen size
+function optimizeTableForMobile() {
+    const screenWidth = window.innerWidth;
+    const itemsTable = document.getElementById('items-table');
+    
+    // Handle very small screens
+    if (screenWidth < 480) {
+        // Adjust column widths for small screens
+        const headerCells = itemsTable.querySelectorAll('th');
+        if (headerCells.length >= 6) {
+            // Item name column
+            headerCells[0].style.width = '20%';
+            // Description column
+            headerCells[1].style.width = '25%';
+            // Price column
+            headerCells[2].style.width = '15%';
+            // Quantity column
+            headerCells[3].style.width = '10%';
+            // Total column
+            headerCells[4].style.width = '15%';
+            // Action column
+            headerCells[5].style.width = '15%';
+        }
+    } else {
+        // Reset for larger screens
+        const headerCells = itemsTable.querySelectorAll('th');
+        headerCells.forEach(cell => {
+            cell.style.width = '';
+        });
+    }
+}
+
+// Function to update input field widths on mobile
+function updateInputWidthsForMobile() {
+    const screenWidth = window.innerWidth;
+    
+    // Price input fields adjustment
+    const priceInputs = document.querySelectorAll('.item-price');
+    priceInputs.forEach(input => {
+        if (screenWidth < 480) {
+            input.style.width = '50px';
+        } else {
+            input.style.width = '';
+        }
+    });
+    
+    // Quantity input fields adjustment
+    const qtyInputs = document.querySelectorAll('.item-qty');
+    qtyInputs.forEach(input => {
+        if (screenWidth < 480) {
+            input.style.width = '40px';
+        } else {
+            input.style.width = '';
+        }
+    });
+}
+
+// Function to handle orientation change and resize
+function handleScreenResize() {
+    optimizeTableForMobile();
+    updateInputWidthsForMobile();
+}
+
+// Add these function calls to your existing DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', function() {
+    // Existing code from your script.js...
+    
+    // Add these new function calls for responsive behavior
+    optimizeTableForMobile();
+    updateInputWidthsForMobile();
+    
+    // Listen for window resize events
+    window.addEventListener('resize', handleScreenResize);
+    
+    // Also listen for orientation change for mobile devices
+    window.addEventListener('orientationchange', handleScreenResize);
+});
+
+// Modify your addProductRow and addCustomItemRow functions to call these functions
+// For example, at the end of the addProductRow function, add:
+function addProductRow(product, description = '') {
+    // Your existing code...
+    
+    // Call responsive functions after adding a row
+    optimizeTableForMobile();
+    updateInputWidthsForMobile();
+}
+
+function addCustomItemRow() {
+    // Your existing code...
+    
+    // Call responsive functions after adding a row
+    optimizeTableForMobile();
+    updateInputWidthsForMobile();
+}
