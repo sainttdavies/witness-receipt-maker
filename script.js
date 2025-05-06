@@ -15,6 +15,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize payment details visibility
     togglePaymentDetails();
+    
+    // Add these new function calls for responsive behavior
+    optimizeTableForMobile();
+    updateInputWidthsForMobile();
+    
+    // Listen for window resize events
+    window.addEventListener('resize', handleScreenResize);
+    
+    // Also listen for orientation change for mobile devices
+    window.addEventListener('orientationchange', handleScreenResize);
 });
 
 function updateDateAndTime() {
@@ -124,14 +134,36 @@ function addProductRow(product, description = '') {
     row.innerHTML = `
         <td><input type="text" class="item-name" value="${product.name}" readonly></td>
         <td><input type="text" class="item-desc" value="${description}" ${!description ? 'placeholder="Description"' : ''}></td>
-        <td>${currencySymbol}<input type="number" class="item-price" value="${product.price.toFixed(2)}" step="0.01" min="0" onchange="updateRowTotal(this)"></td>
-        <td><input type="number" class="item-qty" value="1" min="1" onchange="updateRowTotal(this)"></td>
+        <td>${currencySymbol}<input type="number" class="item-price" value="${product.price.toFixed(2)}" step="0.01" min="0"></td>
+        <td><input type="number" class="item-qty" value="1" min="1"></td>
         <td>${currencySymbol}<span class="row-total">${product.price.toFixed(2)}</span></td>
-        <td><button class="remove-item-btn" onclick="removeItemRow(this)">Remove</button></td>
+        <td><button class="remove-item-btn">Remove</button></td>
     `;
     
     tbody.appendChild(row);
+    
+    // Add event listeners to input fields
+    const priceInput = row.querySelector('.item-price');
+    const qtyInput = row.querySelector('.item-qty');
+    const removeBtn = row.querySelector('.remove-item-btn');
+    
+    priceInput.addEventListener('input', function() {
+        updateRowTotal(this);
+    });
+    
+    qtyInput.addEventListener('input', function() {
+        updateRowTotal(this);
+    });
+    
+    removeBtn.addEventListener('click', function() {
+        removeItemRow(this);
+    });
+    
     calculateTotal();
+    
+    // Call responsive functions after adding a row
+    optimizeTableForMobile();
+    updateInputWidthsForMobile();
 }
 
 function addCustomItemRow() {
@@ -142,13 +174,36 @@ function addCustomItemRow() {
     row.innerHTML = `
         <td><input type="text" class="item-name" placeholder="Item Name"></td>
         <td><input type="text" class="item-desc" placeholder="Description"></td>
-        <td>${currencySymbol}<input type="number" class="item-price" placeholder="0.00" step="0.01" min="0" onchange="updateRowTotal(this)"></td>
-        <td><input type="number" class="item-qty" placeholder="1" value="1" min="1" onchange="updateRowTotal(this)"></td>
+        <td>${currencySymbol}<input type="number" class="item-price" placeholder="0.00" value="0.00" step="0.01" min="0"></td>
+        <td><input type="number" class="item-qty" placeholder="1" value="1" min="1"></td>
         <td>${currencySymbol}<span class="row-total">0.00</span></td>
-        <td><button class="remove-item-btn" onclick="removeItemRow(this)">Remove</button></td>
+        <td><button class="remove-item-btn">Remove</button></td>
     `;
     
     tbody.appendChild(row);
+    
+    // Add event listeners to input fields
+    const priceInput = row.querySelector('.item-price');
+    const qtyInput = row.querySelector('.item-qty');
+    const removeBtn = row.querySelector('.remove-item-btn');
+    
+    priceInput.addEventListener('input', function() {
+        updateRowTotal(this);
+    });
+    
+    qtyInput.addEventListener('input', function() {
+        updateRowTotal(this);
+    });
+    
+    removeBtn.addEventListener('click', function() {
+        removeItemRow(this);
+    });
+    
+    calculateTotal();
+    
+    // Call responsive functions after adding a row
+    optimizeTableForMobile();
+    updateInputWidthsForMobile();
 }
 
 function removeItemRow(btn) {
@@ -287,7 +342,7 @@ function prepareAndPrintReceipt() {
         newRow.innerHTML = `
             <td>${itemNumber}</td>
             <td>${description}</td>
-            <td>${qty.toFixed(2)}</td>
+            <td>${qty}</td>
             <td>${price.toFixed(2)}</td>
             <td>${total.toFixed(2)}</td>
         `;
@@ -342,9 +397,8 @@ function resetForm() {
         updateDateAndTime();
     }
 }
-// Add this function to your existing JavaScript file (script.js)
 
-// This function ensures the table cells adapt to the screen size
+// Function to ensure the table cells adapt to the screen size
 function optimizeTableForMobile() {
     const screenWidth = window.innerWidth;
     const itemsTable = document.getElementById('items-table');
@@ -403,39 +457,6 @@ function updateInputWidthsForMobile() {
 
 // Function to handle orientation change and resize
 function handleScreenResize() {
-    optimizeTableForMobile();
-    updateInputWidthsForMobile();
-}
-
-// Add these function calls to your existing DOMContentLoaded event
-document.addEventListener('DOMContentLoaded', function() {
-    // Existing code from your script.js...
-    
-    // Add these new function calls for responsive behavior
-    optimizeTableForMobile();
-    updateInputWidthsForMobile();
-    
-    // Listen for window resize events
-    window.addEventListener('resize', handleScreenResize);
-    
-    // Also listen for orientation change for mobile devices
-    window.addEventListener('orientationchange', handleScreenResize);
-});
-
-// Modify your addProductRow and addCustomItemRow functions to call these functions
-// For example, at the end of the addProductRow function, add:
-function addProductRow(product, description = '') {
-    // Your existing code...
-    
-    // Call responsive functions after adding a row
-    optimizeTableForMobile();
-    updateInputWidthsForMobile();
-}
-
-function addCustomItemRow() {
-    // Your existing code...
-    
-    // Call responsive functions after adding a row
     optimizeTableForMobile();
     updateInputWidthsForMobile();
 }
