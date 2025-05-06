@@ -1,3 +1,4 @@
+/* General styles */
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
@@ -5,14 +6,18 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    background-color: #f5f5f5;
 }
 
 .receipt-container {
-    border: 1px solid #ccc;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     padding: 30px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
+/* Form View (Non-Print) */
 .receipt-header {
     text-align: center;
     margin-bottom: 20px;
@@ -24,6 +29,7 @@ body {
     color: #2c3e50;
     margin: 0;
     font-size: 24px;
+    font-weight: bold;
 }
 
 .receipt-header .logo-placeholder {
@@ -57,6 +63,15 @@ body {
 
 .customer-info {
     margin-bottom: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.customer-info h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 18px;
 }
 
 .customer-info input,
@@ -64,6 +79,7 @@ body {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
+    margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
@@ -71,6 +87,33 @@ body {
 .customer-info textarea {
     resize: vertical;
     min-height: 60px;
+}
+
+.product-selection {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#product-select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    flex: 1;
+}
+
+#add-product-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#add-product-btn:hover {
+    background-color: #2980b9;
 }
 
 table {
@@ -87,6 +130,7 @@ th, td {
 
 th {
     background-color: #f5f5f5;
+    font-weight: bold;
 }
 
 .add-item-btn {
@@ -117,27 +161,6 @@ th {
     background-color: #c0392b;
 }
 
-.total-section {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    margin-top: 20px;
-    font-weight: bold;
-}
-
-.total-row {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    margin-bottom: 5px;
-}
-
-.total-label {
-    padding-right: 20px;
-    min-width: 150px;
-    text-align: right;
-}
-
 .discount-container {
     display: flex;
     justify-content: flex-end;
@@ -152,20 +175,39 @@ th {
     gap: 5px;
 }
 
-.discount-input input {
+.discount-input input, 
+.discount-input select {
     width: 80px;
     padding: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
 
-.receipt-footer {
-    margin-top: 30px;
-    text-align: center;
-    font-size: 14px;
-    color: #7f8c8d;
-    border-top: 1px solid #eee;
-    padding-top: 20px;
+.total-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 20px;
+    font-weight: bold;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+    margin-bottom: 5px;
+}
+
+.grand-total {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #2c3e50;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
 }
 
 .action-buttons {
@@ -203,28 +245,168 @@ th {
 
 /* Form input styles */
 select, input[type="text"], input[type="email"], input[type="number"] {
-    padding: 5px;
+    padding: 8px;
     border-radius: 4px;
     border: 1px solid #ddd;
 }
 
+/* Print Receipt Styles - normally hidden */
+.print-receipt {
+    display: none;
+}
+
 /* Media query for printing */
 @media print {
-    .action-buttons, .add-item-btn, .remove-item-btn, .discount-input {
-        display: none;
-    }
-    
     body {
         padding: 0;
+        background: white;
     }
     
     .receipt-container {
         box-shadow: none;
         border: none;
+        padding: 0;
     }
     
-    input, textarea {
-        border: none !important;
-        padding: 0 !important;
+    /* Hide the form view when printing */
+    .input-form {
+        display: none;
+    }
+    
+    /* Show the print view when printing */
+    .print-receipt {
+        display: block;
+        padding: 20px;
+        font-family: 'Arial', sans-serif;
+    }
+    
+    .print-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .print-logo {
+        font-size: 24px;
+        font-weight: bold;
+        border: 0px solid #333;
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        border-radius: 50%;
+        margin: 0 auto 10px;
+    }
+    
+    .print-header h1 {
+        margin: 0 0 5px 0;
+        font-size: 22px;
+    }
+    
+    .print-header p {
+        margin: 3px 0;
+        font-size: 14px;
+    }
+    
+    .print-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+    }
+    
+    .print-title h2 {
+        margin: 0;
+        font-size: 20px;
+        color: #2c3e50;
+    }
+    
+    .print-receipt-info p {
+        margin: 0;
+        font-size: 14px;
+    }
+    
+    .print-customer {
+        margin-bottom: 20px;
+    }
+    
+    .print-customer h3 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        color: #555;
+    }
+    
+    .print-customer p {
+        margin: 3px 0;
+        font-size: 14px;
+    }
+    
+    .print-items {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    
+    .print-items th {
+        background-color: #f5f5f5;
+        padding: 8px;
+        text-align: left;
+        font-size: 14px;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .print-items td {
+        padding: 8px;
+        text-align: left;
+        font-size: 14px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .print-totals {
+        width: 300px;
+        margin-left: auto;
+        margin-bottom: 30px;
+    }
+    
+    .print-total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+    }
+    
+    .print-grand-total {
+        font-weight: bold;
+        font-size: 16px;
+        border-top: 1px solid #ddd;
+        padding-top: 8px;
+        margin-top: 5px;
+    }
+    
+    .print-payment {
+        margin-bottom: 30px;
+    }
+    
+    .print-payment h3 {
+        margin: 0 0 10px 0;
+        font-size: 16px;
+        color: #555;
+    }
+    
+    .print-payment-row {
+        display: flex;
+        margin-bottom: 5px;
+    }
+    
+    .print-payment-label {
+        width: 120px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    
+    .print-footer {
+        text-align: center;
+        font-size: 14px;
+        margin-top: 30px;
+        color: #555;
     }
 }

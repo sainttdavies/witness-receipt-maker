@@ -8,133 +8,207 @@
 </head>
 <body>
     <div class="receipt-container">
-        <div class="receipt-header">
-            <div class="logo-placeholder">Your Logo Here</div>
-            <h1>THE WITNESS COLLECTION</h1>
-            <p class="tagline">Faith-Inspired Merchandise</p>
-        </div>
-        
-        <div class="receipt-info">
-            <div>
-                <p><span class="receipt-number">Receipt #:</span> <span id="receipt-number"></span></p>
-                <p><span>Date:</span> <span id="receipt-date"></span></p>
+        <!-- Form view (visible only in browser) -->
+        <div class="input-form">
+            <div class="receipt-header">
+               <div class="logo-placeholder">
+  <img src="assets/IMG_2590 2.JPG" alt="Logo" style="max-width: 100px; height: auto; border-radius: 80px;" />
+</div>
+                <h1>THE WITNESS COLLECTION</h1>
+                <p class="tagline">Faith-Inspired Merchandise</p>
             </div>
-            <div>
-                <p><span>Payment Method:</span>
-                    <select id="payment-method" style="padding: 5px; border-radius: 4px; border: 1px solid #ddd;">
-                        <option value="cash">Cash</option>
-                        <option value="mobile-money">Mobile Money</option>
-                        <option value="telecel-cash">Telecel Cash</option>
-                        <option value="bank-transfer">Bank Transfer</option>
-                        <option value="card">Card Payment</option>
-                        <option value="other">Other</option>
+            
+            <div class="receipt-info">
+                <div>
+                    <p><span class="receipt-number">Receipt #:</span> <span id="receipt-number"></span></p>
+                    <p><span>Date:</span> <span id="receipt-date"></span></p>
+                </div>
+                <div>
+                    <p><span>Payment Method:</span>
+                        <select id="payment-method">
+                            <option value="cash">Cash</option>
+                            <option value="mobile-money">Mobile Money</option>
+                            <option value="telecel-cash">Telecel Cash</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                            <option value="card">Card Payment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </p>
+                    <p id="payment-details-container">
+                        <span>Reference/Details:</span>
+                        <input type="text" id="payment-details" placeholder="Enter reference or details">
+                    </p>
+                </div>
+            </div>
+            
+            <div class="customer-info">
+                <h3>Customer Information</h3>
+                <div>
+                    <label for="customer-name">Name:</label>
+                    <input type="text" id="customer-name" placeholder="Customer Name">
+                </div>
+                <div>
+                    <label for="customer-email">Email:</label>
+                    <input type="email" id="customer-email" placeholder="customer@example.com">
+                </div>
+                <div>
+                    <label for="customer-phone">Phone:</label>
+                    <input type="text" id="customer-phone" placeholder="(555) 123-4567">
+                </div>
+                <div>
+                    <label for="customer-notes">Notes:</label>
+                    <textarea id="customer-notes" placeholder="Any special notes or requests"></textarea>
+                </div>
+            </div>
+            
+            <h3>Items Purchased</h3>
+            <div class="product-selection">
+                <label for="product-select">Select Product:</label>
+                <select id="product-select">
+                    <option value="">-- Select Product --</option>
+                    <option value="tshirt">T-shirt</option>
+                    <option value="lapel">Lapel Pin</option>
+                    <option value="bookmark">Bookmark</option>
+                    <option value="towel">Face Towel</option>
+                    <option value="journal">Journal</option>
+                    <option value="book">Book</option>
+                    <option value="oil">Oil</option>
+                    <option value="other">Other</option>
+                </select>
+                <button id="add-product-btn">Add to Receipt</button>
+            </div>
+
+            <table id="items-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="items-body">
+                    <!-- Items will be added here -->
+                </tbody>
+            </table>
+            
+            <button class="add-item-btn" id="add-item-btn">+ Add Custom Item</button>
+            
+            <div class="discount-container">
+                <div class="discount-input">
+                    <label for="discount-amount">Discount (₵):</label>
+                    <input type="number" id="discount-amount" value="0" min="0" step="0.01">
+                </div>
+                <div class="discount-input">
+                    <label for="discount-percent">Discount (%):</label>
+                    <input type="number" id="discount-percent" value="0" min="0" max="100">
+                </div>
+                <div class="discount-input">
+                    <label for="currency">Currency:</label>
+                    <select id="currency">
+                        <option value="₵">Ghana Cedi (₵)</option>
+                        <option value="$">US Dollar ($)</option>
+                        <option value="€">Euro (€)</option>
                     </select>
-                </p>
-                <p id="payment-details-container" style="display: none;">
-                    <span>Reference/Details:</span>
-                    <input type="text" id="payment-details" placeholder="Enter reference or details" 
-                           style="padding: 5px; border-radius: 4px; border: 1px solid #ddd; width: 200px;">
-                </p>
+                </div>
             </div>
-        </div>
-        
-        <div class="customer-info">
-            <h3>Customer Information</h3>
-            <div>
-                <label for="customer-name">Name:</label>
-                <input type="text" id="customer-name" placeholder="Customer Name">
+            
+            <div class="total-section">
+                <div class="total-row">
+                    <div class="total-label">Subtotal:</div>
+                    <div><span id="currency-symbol">₵</span><span id="subtotal-amount">0.00</span></div>
+                </div>
+                <div class="total-row">
+                    <div class="total-label">Discount Applied:</div>
+                    <div><span id="currency-symbol-discount">₵</span><span id="discount-applied">0.00</span></div>
+                </div>
+                <div class="total-row grand-total">
+                    <div class="total-label">Total Amount:</div>
+                    <div><span id="currency-symbol-total">₵</span><span id="total-amount">0.00</span></div>
+                </div>
             </div>
-            <div>
-                <label for="customer-email">Email:</label>
-                <input type="email" id="customer-email" placeholder="customer@example.com">
+            
+            <div class="action-buttons">
+                <button class="action-button print-btn" id="print-btn">Print Receipt</button>
+                <button class="action-button reset-btn" id="reset-btn">Reset Form</button>
             </div>
-            <div>
-                <label for="customer-phone">Phone:</label>
-                <input type="text" id="customer-phone" placeholder="(555) 123-4567">
-            </div>
-            <div>
-                <label for="customer-notes">Notes:</label>
-                <textarea id="customer-notes" placeholder="Any special notes or requests"></textarea>
-            </div>
-        </div>
-        
-        <h3>Items Purchased</h3>
-        <div style="margin-bottom: 15px;">
-            <label for="product-select">Select Product:</label>
-            <select id="product-select" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd; width: 200px;">
-                <option value="">-- Select Product --</option>
-                <option value="tshirt">T-shirt</option>
-                <option value="lapel">Lapel Pin</option>
-                <option value="bookmark">Bookmark</option>
-                <option value="towel">Face Towel</option>
-                <option value="journal">Journal</option>
-                <option value="book">Book</option>
-                <option value="oil">Oil</option>
-                <option value="other">Other</option>
-            </select>
-            <button id="add-product-btn" style="margin-left: 10px; padding: 8px 15px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">Add to Receipt</button>
         </div>
 
-        <table id="items-table">
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="items-body">
-                <!-- Items will be added here -->
-            </tbody>
-        </table>
-        
-        <button class="add-item-btn" id="add-item-btn">+ Add Custom Item</button>
-        
-        <div class="discount-container">
-            <div class="discount-input">
-                <label for="discount-amount">Discount (₵):</label>
-                <input type="number" id="discount-amount" value="0" min="0" step="0.01" onchange="calculateTotal()">
+        <!-- Print view (visible only when printing) -->
+        <div class="print-receipt">
+            <div class="print-header">
+                <div class="print-logo">
+  <img src="assets/IMG_2590 2.JPG" alt="Logo" style="max-width: 75px; height: auto;border-radius: 80px;" />
+
+
+
+                </div>
+                <h1>THE WITNESS COLLECTION</h1>
+                <p>Ghana</p>
+                <p>thewitnessc@gmail.com</p>
             </div>
-            <div class="discount-input">
-                <label for="discount-percent">Discount (%):</label>
-                <input type="number" id="discount-percent" value="0" min="0" max="100" onchange="calculateTotal()">
+
+            <div class="print-title">
+                <h2>RECEIPT</h2>
+                <div class="print-receipt-info">
+                    <p>Receipt# <span id="print-receipt-number"></span></p>
+                </div>
             </div>
-            <div class="discount-input">
-                <label for="currency">Currency:</label>
-                <select id="currency" onchange="updateCurrencySymbol()" style="padding: 5px; border-radius: 4px; border: 1px solid #ddd;">
-                    <option value="₵">Ghana Cedi (₵)</option>
-                    <option value="$">US Dollar ($)</option>
-                    <option value="€">Euro (€)</option>
-                </select>
+
+            <div class="print-customer">
+                <h3>Bill To</h3>
+                <p id="print-customer-name"></p>
+                <p id="print-customer-email"></p>
+                <p id="print-customer-phone"></p>
             </div>
-        </div>
-        
-        <div class="total-section">
-            <div class="total-row">
-                <div class="total-label">Subtotal:</div>
-                <div><span id="currency-symbol">₵</span><span id="subtotal-amount">0.00</span></div>
+
+            <table class="print-items">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Item & Description</th>
+                        <th>Qty</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="print-items-body">
+                    <!-- Items will be duplicated here for printing -->
+                </tbody>
+            </table>
+
+            <div class="print-totals">
+                <div class="print-total-row">
+                    <div class="print-total-label">Sub Total</div>
+                    <div class="print-total-value"><span id="print-currency-symbol">₵</span><span id="print-subtotal">0.00</span></div>
+                </div>
+                <div class="print-total-row">
+                    <div class="print-total-label">Discount (-)</div>
+                    <div class="print-total-value"><span id="print-discount-symbol">₵</span><span id="print-discount">0.00</span></div>
+                </div>
+                <div class="print-total-row print-grand-total">
+                    <div class="print-total-label">Total</div>
+                    <div class="print-total-value"><span id="print-currency-total">GHS</span><span id="print-total">0.00</span></div>
+                </div>
             </div>
-            <div class="total-row">
-                <div class="total-label">Discount Applied:</div>
-                <div><span id="currency-symbol-discount">₵</span><span id="discount-applied">0.00</span></div>
+
+            <div class="print-payment">
+                <h3>Payment Details</h3>
+                <div class="print-payment-row">
+                    <div class="print-payment-label">Payment Mode</div>
+                    <div id="print-payment-mode">Cash</div>
+                </div>
+                <div class="print-payment-row">
+                    <div class="print-payment-label">Receipt Date</div>
+                    <div id="print-receipt-date"></div>
+                </div>
             </div>
-            <div class="total-row" style="font-size: 1.2em; margin-top: 5px;">
-                <div class="total-label">Total Amount:</div>
-                <div><span id="currency-symbol-total">₵</span><span id="total-amount">0.00</span></div>
+
+            <div class="print-footer">
+                <p>Thank you for supporting The Witness Collection!</p>
             </div>
-        </div>
-        
-        <div class="receipt-footer">
-            <p>Thank you for supporting The Witness Collection!</p>
-            <p>Your purchase helps support our ministry.</p>
-        </div>
-        
-        <div class="action-buttons">
-            <button class="action-button print-btn" id="print-btn">Print Receipt</button>
-            <button class="action-button reset-btn" id="reset-btn">Reset Form</button>
         </div>
     </div>
 

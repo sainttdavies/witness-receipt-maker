@@ -6,11 +6,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners
     document.getElementById('add-item-btn').addEventListener('click', addCustomItemRow);
     document.getElementById('add-product-btn').addEventListener('click', handleAddProduct);
-    document.getElementById('print-btn').addEventListener('click', printReceipt);
+    document.getElementById('print-btn').addEventListener('click', prepareAndPrintReceipt);
     document.getElementById('reset-btn').addEventListener('click', resetForm);
     document.getElementById('payment-method').addEventListener('change', togglePaymentDetails);
     document.getElementById('discount-amount').addEventListener('input', handleDiscountAmountChange);
     document.getElementById('discount-percent').addEventListener('input', handleDiscountPercentChange);
+    document.getElementById('currency').addEventListener('change', updateCurrencySymbol);
     
     // Initialize payment details visibility
     togglePaymentDetails();
@@ -27,15 +28,29 @@ function updateDateAndTime() {
         hour: '2-digit',
         minute: '2-digit'
     });
+    
+    // Update for form view
     document.getElementById('receipt-date').textContent = `${dateStr} at ${timeStr}`;
+    
+    // Update for print view
+    document.getElementById('print-receipt-date').textContent = today.toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+    });
 }
 
 function generateReceiptNumber() {
     // Generate a unique receipt number using timestamp + random number
     const timestamp = new Date().getTime();
     const random = Math.floor(Math.random() * 1000);
-    const receiptNumber = 'TWC-' + timestamp.toString().slice(-6) + '-' + random;
+    const receiptNumber = 'SR-' + timestamp.toString().slice(-5);
+    
+    // Update for form view
     document.getElementById('receipt-number').textContent = receiptNumber;
+    
+    // Update for print view
+    document.getElementById('print-receipt-number').textContent = receiptNumber;
 }
 
 function togglePaymentDetails() {
@@ -66,21 +81,21 @@ function handleAddProduct() {
         // Create dialog for T-shirt options
         const sizeColor = promptTshirtOptions();
         if (sizeColor) {
-            addProductRow(product, `Size: ${sizeColor.size}, Color: ${sizeColor.color}`);
+            addProductRow(product, `${sizeColor.color} T-shirt(${sizeColor.size})`);
         }
     } 
     // Handle books with title
     else if (productKey === 'book') {
         const title = prompt('Enter book title:');
         if (title) {
-            addProductRow(product, `Title: ${title}`);
+            addProductRow(product, `Book: ${title}`);
         }
     }
     // Handle items with color option
     else if (product.needsColor) {
         const color = prompt('Enter color:');
         if (color) {
-            addProductRow(product, `Color: ${color}`);
+            addProductRow(product, `${color} ${product.name}`);
         }
     }
     else {
@@ -170,11 +185,17 @@ function handleDiscountPercentChange() {
 
 function updateCurrencySymbol() {
     const currencySymbol = document.getElementById('currency').value;
+    const currencyText = document.getElementById('currency').options[document.getElementById('currency').selectedIndex].text.split('(')[0].trim();
     
-    // Update all currency symbols
+    // Update all currency symbols in form view
     document.getElementById('currency-symbol').textContent = currencySymbol;
     document.getElementById('currency-symbol-discount').textContent = currencySymbol;
     document.getElementById('currency-symbol-total').textContent = currencySymbol;
+    
+    // Update currency in print view
+    document.getElementById('print-currency-symbol').textContent = currencySymbol;
+    document.getElementById('print-discount-symbol').textContent = currencySymbol;
+    document.getElementById('print-currency-total').textContent = currencyText;
     
     // Update currency in table
     const priceCells = document.querySelectorAll('td:nth-child(3)');
@@ -212,13 +233,70 @@ function calculateTotal() {
     // Calculate final total
     const finalTotal = Math.max(0, subtotal - discount);
     
-    // Update displays
+    // Update displays in form view
     document.getElementById('subtotal-amount').textContent = subtotal.toFixed(2);
     document.getElementById('discount-applied').textContent = discount.toFixed(2);
     document.getElementById('total-amount').textContent = finalTotal.toFixed(2);
+    
+    // Update displays in print view
+    document.getElementById('print-subtotal').textContent = subtotal.toFixed(2);
+    document.getElementById('print-discount').textContent = discount.toFixed(2);
+    document.getElementById('print-total').textContent = finalTotal.toFixed(2);
 }
 
-function printReceipt() {
+function prepareAndPrintReceipt() {
+    // Copy customer information to print view
+    document.getElementById('print-customer-name').textContent = document.getElementById('customer-name').value || 'Guest Customer';
+    document.getElementById('print-customer-email').textContent = document.getElementById('customer-email').value || '';
+    document.getElementById('print-customer-phone').textContent = document.getElementById('customer-phone').value || '';
+    
+    // Set payment method
+    const paymentMethod = document.getElementById('payment-method');
+    const paymentText = paymentMethod.options[paymentMethod.selectedIndex].text;
+    document.getElementById('print-payment-mode').textContent = paymentText;
+    
+    // Check if there's a payment reference to add
+    if (document.getElementById('payment-details-container').style.display !== 'none') {
+        const paymentDetails = document.getElementById('payment-details').value;
+        if (paymentDetails) {
+            document.getElementById('print-payment-mode').textContent += ` (Ref: ${paymentDetails})`;
+        }
+    }
+    
+    // Copy items to print view
+    const printItemsBody = document.getElementById('print-items-body');
+    printItemsBody.innerHTML = ''; // Clear existing items
+    
+    const items = document.getElementById('items-body').querySelectorAll('tr');
+    let itemNumber = 1;
+    
+    items.forEach(item => {
+        const name = item.querySelector('.item-name').value;
+        const desc = item.querySelector('.item-desc').value;
+        const price = parseFloat(item.querySelector('.item-price').value) || 0;
+        const qty = parseInt(item.querySelector('.item-qty').value) || 1;
+        const total = price * qty;
+        
+        // Create description text combining name and description
+        let description = name;
+        if (desc) {
+            description = `${name} - ${desc}`;
+        }
+        
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${itemNumber}</td>
+            <td>${description}</td>
+            <td>${qty.toFixed(2)}</td>
+            <td>${price.toFixed(2)}</td>
+            <td>${total.toFixed(2)}</td>
+        `;
+        
+        printItemsBody.appendChild(newRow);
+        itemNumber++;
+    });
+    
+    // Finally, print the receipt
     window.print();
 }
 
@@ -249,6 +327,15 @@ function resetForm() {
         document.getElementById('subtotal-amount').textContent = '0.00';
         document.getElementById('discount-applied').textContent = '0.00';
         document.getElementById('total-amount').textContent = '0.00';
+        
+        // Reset print view values
+        document.getElementById('print-subtotal').textContent = '0.00';
+        document.getElementById('print-discount').textContent = '0.00';
+        document.getElementById('print-total').textContent = '0.00';
+        document.getElementById('print-customer-name').textContent = '';
+        document.getElementById('print-customer-email').textContent = '';
+        document.getElementById('print-customer-phone').textContent = '';
+        document.getElementById('print-items-body').innerHTML = '';
         
         // Generate new receipt number and update date/time
         generateReceiptNumber();
