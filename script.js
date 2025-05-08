@@ -88,11 +88,13 @@ function handleAddProduct() {
     
     // Handle T-shirts with special options
     if (productKey === 'tshirt') {
-        // Create dialog for T-shirt options
-        const sizeColor = promptTshirtOptions();
-        if (sizeColor) {
-            addProductRow(product, `${sizeColor.color} T-shirt(${sizeColor.size})`);
-        }
+        // Create dialog for T-shirt options with type selection
+        createTshirtDialog(function(tshirtInfo) {
+            if (tshirtInfo) {
+                const description = `${tshirtInfo.color} T-shirt(${tshirtInfo.size}) - Type: ${tshirtInfo.type}`;
+                addProductRow(product, description);
+            }
+        });
     } 
     // Handle books with title
     else if (productKey === 'book') {
@@ -116,14 +118,91 @@ function handleAddProduct() {
     productSelect.value = '';
 }
 
-function promptTshirtOptions() {
-    const size = prompt('Enter T-shirt size (S, M, L, XL, XXL, etc):');
-    if (!size) return null;
+// New function to create a custom T-shirt dialog
+function createTshirtDialog(callback) {
+    // Create a modal dialog for T-shirt options
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '1000';
     
-    const color = prompt('Enter T-shirt color:');
-    if (!color) return null;
+    const dialog = document.createElement('div');
+    dialog.style.backgroundColor = 'white';
+    dialog.style.padding = '20px';
+    dialog.style.borderRadius = '8px';
+    dialog.style.maxWidth = '400px';
+    dialog.style.width = '90%';
     
-    return { size, color };
+    dialog.innerHTML = `
+        <h3 style="margin-top: 0; color: #2c3e50;">T-shirt Details</h3>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="tshirt-size" style="display: block; margin-bottom: 5px;">Size:</label>
+            <select id="tshirt-size" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                <option value="">-- Select Size --</option>
+                <option value="S">Small (S)</option>
+                <option value="M">Medium (M)</option>
+                <option value="L">Large (L)</option>
+                <option value="XL">X-Large (XL)</option>
+                <option value="XXL">XX-Large (XXL)</option>
+                <option value="XXXL">XXX-Large (XXXL)</option>
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="tshirt-color" style="display: block; margin-bottom: 5px;">Color:</label>
+            <input type="text" id="tshirt-color" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;" placeholder="Enter color">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label for="tshirt-type" style="display: block; margin-bottom: 5px;">Type:</label>
+            <select id="tshirt-type" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                <option value="">-- Select Type --</option>
+                <option value="M01">M01</option>
+                <option value="M02">M02</option>
+                <option value="M03">M03</option>
+                <option value="M04">M04</option>
+                <option value="M05">M05</option>
+                <option value="M06">M06</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button id="tshirt-cancel" style="padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; background-color: #95a5a6; color: white;">Cancel</button>
+            <button id="tshirt-confirm" style="padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; background-color: #3498db; color: white;">Add to Receipt</button>
+        </div>
+    `;
+    
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+    
+    // Event listeners for the dialog buttons
+    document.getElementById('tshirt-cancel').addEventListener('click', function() {
+        document.body.removeChild(modal);
+        callback(null);
+    });
+    
+    document.getElementById('tshirt-confirm').addEventListener('click', function() {
+        const size = document.getElementById('tshirt-size').value;
+        const color = document.getElementById('tshirt-color').value;
+        const type = document.getElementById('tshirt-type').value;
+        
+        // Validate inputs
+        if (!size || !color || !type) {
+            alert('Please fill in all T-shirt details');
+            return;
+        }
+        
+        document.body.removeChild(modal);
+        callback({size, color, type});
+    });
 }
 
 function addProductRow(product, description = '') {
